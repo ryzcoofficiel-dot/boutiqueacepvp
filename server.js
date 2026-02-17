@@ -4,8 +4,8 @@ import crypto from "crypto";
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const TEBEX_WEBHOOK_SECRET = process.env.TEBEX_WEBHOOK_SECRET || "fd97d607e62dd483d487aff3f788b8b0";
-const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || "https://discord.com/api/webhooks/1471561824234115124/BgoOTnNBFUL-dYm-cla4iBQ7j59u8W_A0JL0GAo37DLQEyLpHS_D3y_4H2NTT9-WYxh1";
+const TEBEX_WEBHOOK_SECRET = process.env.TEBEX_WEBHOOK_SECRET || "";
+const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || "";
 const DISCORD_PING_ROLE_ID = process.env.DISCORD_PING_ROLE_ID || ""; // optionnel
 const ENFORCE_TEBEX_IP_CHECK = (process.env.TEBEX_IP_CHECK || "0") === "1";
 
