@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boutique ACEPVP | FiveM</title>
+  <meta name="description" content="Boutique officielle ACEPVP FiveM - Packs AceCoins via PayPal." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- PayPal Hosted Buttons SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=BAAZX08i7eloZAqwoL2wRXn82de-McJqadfYDF-hAxdZ4I65rzkfSL_28kbXFvdvGddEXmUVwwIl9ly7AI&components=hosted-buttons&disable-funding=venmo&currency=EUR" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="bg-layer" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div class="hero__overlay"></div>
+    <div class="hero__content container">
+      <div class="hero__brand">
+        <img src="images/ui/ace_logo.png" alt="ACEPVP" class="hero__logo" />
+        <div>
+          <p class="hero__eyebrow">Serveur FiveM</p>
+          <h1 class="hero__title">Boutique ACEPVP</h1>
+          <p class="hero__subtitle">
+            Achetez vos <strong>AceCoins</strong> en quelques clics et récupérez vos gains via Discord.
+          </p>
+        </div>
+      </div>
+
+      <div class="hero__actions">
+        <a href="#packs" class="btn btn--primary">Acheter des packs</a>
+        <a href="https://discord.gg/acepvp" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Discord ACEPVP</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="claim-box" aria-label="Instructions de réclamation">
+      <h2>Comment récupérer vos AceCoins</h2>
+      <p>
+        Après votre paiement PayPal, ouvrez un <strong>ticket sur le Discord ACEPVP</strong>
+        et envoyez votre <strong>pseudo FiveM</strong> ainsi que votre <strong>preuve de paiement</strong>.
+      </p>
+    </section>
+
+    <section id="packs" class="packs">
+      <div class="section-head">
+        <h2>Packs AceCoins</h2>
+        <p>Paiement sécurisé via PayPal</p>
+      </div>
+
+      <div id="packsGrid" class="packs-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="faq">
+      <div class="faq-card">
+        <h3>Questions fréquentes</h3>
+        <div class="faq-item">
+          <h4>Combien de temps pour recevoir mes AceCoins ?</h4>
+          <p>En général, quelques minutes après validation par le staff sur Discord (selon disponibilité).</p>
+        </div>
+        <div class="faq-item">
+          <h4>Que fournir dans le ticket ?</h4>
+          <p>Votre pseudo FiveM + une capture / reçu PayPal du paiement.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Je me suis trompé de pseudo</h4>
+          <p>Ouvrez un ticket rapidement et précisez le bon pseudo avant traitement.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <img src="images/ui/ace_logo.png" alt="ACEPVP" class="footer__logo" />
+        <div>
+          <p class="footer__title">ACEPVP</p>
+          <p class="footer__subtitle">Boutique officielle FiveM</p>
+        </div>
+      </div>
+
+      <div class="footer__links">
+        <a href="https://discord.gg/acepvp" target="_blank" rel="noopener noreferrer">Discord</a>
+        <span>•</span>
+        <a href="#packs">Packs</a>
+      </div>
+
+      <p class="footer__copy">© <span id="year"></span> ACEPVP</p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
