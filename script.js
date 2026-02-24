@@ -187,9 +187,8 @@ window.addEventListener("DOMContentLoaded", () => {
   initCountUp();
   initScrollProgress();
   initBackgroundFx();
+  initStarfield();
   initMagneticButtons();
-  initDigitalConsentLock();
-  initLegalAccordion();
   updateVehicleCount();
 });
 
@@ -205,8 +204,7 @@ function renderCoinCards() {
       <p class="coin-desc">${escapeHtml(pack.description)}</p>
       <ul class="coin-perks">${pack.perks.map((p) => `<li>${escapeHtml(p)}</li>`).join("")}</ul>
       <div class="paypal-slot" id="paypal-hosted-${escapeHtml(pack.hostedButtonId)}"></div>
-      <div class="coin-card__lock">🔒 <strong>Active la validation</strong> ci-dessus pour débloquer le paiement</div>
-      <div class="coin-foot">Après paiement : ticket Discord + pseudo FiveM + preuve PayPal.</div>
+      <div class="coin-foot">Réclamation : ticket Discord • pseudo FiveM • preuve PayPal</div>
     </article>
   `).join("");
 }
@@ -280,7 +278,7 @@ function initPayPalHostedButtons() {
     }
   });
 
-  showToast("Boutique ACEPVP chargée ✅");
+  showToast("Boutique ACEPVP en ligne ✅");
 }
 
 function initTabs() {
@@ -541,56 +539,11 @@ function initScrollProgress() {
 }
 
 
-function initDigitalConsentLock() {
-  const grid = document.getElementById("coinsGrid");
-  const checkbox = document.getElementById("digitalConsentCheckbox");
-  const key = "acepvp_digital_consent_v1";
-  if (!grid || !checkbox) return;
 
-  try {
-    checkbox.checked = localStorage.getItem(key) === "1";
-  } catch (_) {}
-
-  const apply = () => {
-    const unlocked = checkbox.checked;
-    grid.classList.toggle("is-locked", !unlocked);
-    grid.classList.toggle("is-unlocked", unlocked);
-    try { localStorage.setItem(key, unlocked ? "1" : "0"); } catch (_) {}
-    if (unlocked) showToast("Paiement débloqué • Consentement numérique validé ✅");
-  };
-
-  checkbox.addEventListener("change", apply);
-
-  grid.addEventListener("click", (e) => {
-    if (!checkbox.checked) {
-      const card = e.target.closest(".coin-card");
-      if (!card) return;
-      e.preventDefault();
-      checkbox.focus();
-      showToast("Coche la validation contenu numérique avant de payer.");
-    }
-  }, true);
-
-  apply();
-}
-
-function initLegalAccordion() {
-  const buttons = document.querySelectorAll(".legal-accordion__btn");
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const panel = btn.nextElementSibling;
-      if (!panel) return;
-      const isOpen = btn.getAttribute("aria-expanded") === "true";
-      btn.setAttribute("aria-expanded", String(!isOpen));
-      panel.classList.toggle("is-open", !isOpen);
-      panel.style.maxHeight = !isOpen ? `${panel.scrollHeight + 10}px` : "0px";
-    });
-  });
-}
 
 function initMagneticButtons() {
   if (window.matchMedia("(pointer: coarse)").matches) return;
-  const els = document.querySelectorAll(".btn, .segment__btn, .filter, .legal-accordion__btn");
+  const els = document.querySelectorAll(".btn, .segment__btn, .filter");
   els.forEach((el) => {
     let raf = 0;
     el.addEventListener("mousemove", (e) => {
@@ -703,6 +656,26 @@ function initBackgroundFx() {
   window.addEventListener("resize", resize);
   window.addEventListener("mousemove", onMove, { passive: true });
   window.addEventListener("mouseout", onLeave);
+}
+
+
+function initStarfield() {
+  const root = document.getElementById("starfield");
+  if (!root || root.dataset.ready === "1") return;
+  root.dataset.ready = "1";
+  const count = window.innerWidth < 720 ? 28 : window.innerWidth < 1100 ? 42 : 56;
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement("span");
+    s.className = "spark";
+    s.style.left = `${Math.random() * 100}%`;
+    s.style.top = `${Math.random() * 100}%`;
+    s.style.setProperty("--d", `${(Math.random() * 5.5 + 2.2).toFixed(2)}s`);
+    s.style.setProperty("--delay", `${(Math.random() * 5).toFixed(2)}s`);
+    s.style.setProperty("--scale", `${(Math.random() * .9 + .65).toFixed(2)}`);
+    frag.appendChild(s);
+  }
+  root.appendChild(frag);
 }
 
 function showToast(message) {

@@ -26,6 +26,11 @@
     <span class="bg-orb bg-orb--2"></span>
     <span class="bg-orb bg-orb--3"></span>
   </div>
+  <div class="aurora-ribbons" aria-hidden="true">
+    <span class="ribbon ribbon--a"></span>
+    <span class="ribbon ribbon--b"></span>
+  </div>
+  <div class="starfield" id="starfield" aria-hidden="true"></div>
 
   <header class="hero" id="top">
     <div class="hero__media"></div>
@@ -38,8 +43,8 @@
           <p class="hero__eyebrow">ACEPVP • Boutique officielle • FiveM</p>
           <h1 class="hero__title">Boutique <span>ACEPVP</span></h1>
           <p class="hero__subtitle">
-            Achetez vos <strong>AceCoins</strong> avec PayPal et découvrez la collection de <strong>9 véhicules blindés</strong>.
-            Design premium, navigation fluide, version optimisée mobile / desktop.
+            Packs <strong>AceCoins</strong> et catalogue de <strong>véhicules blindés</strong> dans une boutique ACEPVP premium,
+            rapide et pensée pour mobile comme desktop.
           </p>
 
           <div class="hero__stats">
@@ -58,9 +63,9 @@
           </div>
 
           <div class="hero__chips">
-            <span>PayPal Hosted Buttons</span>
-            <span>Livraison via ticket Discord</span>
-            <span>Animations premium</span>
+            <span>Paiement PayPal</span>
+            <span>Catalogue blindés</span>
+            <span>Support Discord</span>
           </div>
 
           <div class="hero__actions">
@@ -106,25 +111,10 @@
             <h2>Packs AceCoins</h2>
           </div>
           <p class="section-head__desc">
-            Choisis ton pack puis règle avec PayPal. Les boutons sont officiels PayPal Hosted Buttons.
+            Choisis un pack et finalise le paiement en quelques secondes.
           </p>
         </div>
-        <div class="digital-consent reveal" id="digitalConsentBox">
-          <div class="digital-consent__icon">⚖️</div>
-          <div class="digital-consent__content">
-            <h3>Validation avant paiement (contenu numérique)</h3>
-            <p>
-              En cochant la case, le client demande la <strong>fourniture immédiate</strong> des AceCoins et reconnaît que
-              le <strong>droit de rétractation</strong> peut être perdu une fois l’exécution commencée (contenu numérique).
-            </p>
-            <label class="consent-check">
-              <input type="checkbox" id="digitalConsentCheckbox" />
-              <span>J’accepte l’exécution immédiate et la perte du droit de rétractation pour les AceCoins une fois la livraison lancée.</span>
-            </label>
-            <small>Cette validation est locale (navigateur) et doit aussi être reprise dans tes CGV / processus interne.</small>
-          </div>
-        </div>
-        <div class="coins-grid is-locked" id="coinsGrid"></div>
+        <div class="coins-grid" id="coinsGrid"></div>
       </div>
     </section>
 
@@ -135,7 +125,7 @@
             <p class="section-head__eyebrow">Collection blindée</p>
             <h2>Véhicules premium</h2>
           </div>
-          <p class="section-head__desc">Ouvre la fiche détaillée pour voir stats, spawn et points forts avant réservation Discord.</p>
+          <p class="section-head__desc">Explore les fiches premium, compare les stats puis réserve via Discord.</p>
         </div>
 
         <div class="vehicle-toolbar">
@@ -175,102 +165,6 @@
     </section>
   </main>
 
-  <section class="legal-premium reveal" id="legal">
-    <div class="container">
-      <div class="section-head legal-premium__head">
-        <div>
-          <p class="section-head__eyebrow">Conformité & confiance</p>
-          <h2>CGV • Remboursement • Mentions légales</h2>
-        </div>
-        <p class="section-head__desc">
-          Bloc client visible, rédigé pour une boutique FiveM / contenu numérique. Remplis les champs <em>[À compléter]</em> avant mise en production.
-        </p>
-      </div>
-
-      <div class="legal-grid">
-        <article class="legal-card legal-card--refund">
-          <div class="legal-card__badge">Remboursement</div>
-          <h3>Politique de remboursement</h3>
-          <p>
-            <strong>Aucun remboursement de convenance</strong> ne pourra être effectué une fois l’achat validé et/ou le gain livré
-            (AceCoins, véhicule, rang, avantage serveur), sauf obligation légale contraire.
-          </p>
-          <ul>
-            <li>Pas de remboursement pour changement d’avis après livraison/exécution.</li>
-            <li>Pas de remboursement si le joueur se trompe de pseudo, de produit ou de montant.</li>
-            <li>Pas de remboursement pour sanction/ban si elle résulte du non-respect du règlement serveur.</li>
-            <li>Le staff peut refuser toute demande abusive ou frauduleuse.</li>
-          </ul>
-          <div class="legal-card__note">
-            <strong>Important :</strong> cette règle ne supprime pas les <strong>droits légaux</strong> du consommateur (défaut de délivrance,
-            paiement en double, défaut de conformité, etc.).
-          </div>
-        </article>
-
-        <article class="legal-card legal-card--rules">
-          <div class="legal-card__badge">Règles boutique</div>
-          <h3>Règles de traitement des achats</h3>
-          <ul class="legal-rules">
-            <li><span>1</span> Après paiement, ouvre un ticket Discord avec ton pseudo FiveM + preuve PayPal.</li>
-            <li><span>2</span> Les délais de traitement sont donnés à titre indicatif par le staff sur Discord.</li>
-            <li><span>3</span> Les achats sont liés au compte/pseudo communiqué par le client.</li>
-            <li><span>4</span> Toute tentative de chargeback abusif peut entraîner un blacklist boutique/serveur.</li>
-            <li><span>5</span> Les prix sont affichés en euros TTC et peuvent évoluer à tout moment.</li>
-            <li><span>6</span> Le bouton de paiement vaut « commande avec obligation de paiement ».</li>
-          </ul>
-        </article>
-
-        <article class="legal-card legal-card--accordion">
-          <div class="legal-card__badge">Mentions obligatoires</div>
-          <h3>Informations à afficher (à compléter)</h3>
-
-          <div class="legal-accordion">
-            <button class="legal-accordion__btn" type="button" aria-expanded="false">
-              <span>Identité du vendeur</span><i>+</i>
-            </button>
-            <div class="legal-accordion__panel">
-              <p><strong>Raison sociale :</strong> [À compléter]</p>
-              <p><strong>Forme juridique :</strong> [À compléter]</p>
-              <p><strong>SIREN / RCS :</strong> [À compléter]</p>
-              <p><strong>TVA intracom :</strong> [À compléter si applicable]</p>
-              <p><strong>Adresse :</strong> [À compléter]</p>
-              <p><strong>Email support :</strong> [À compléter]</p>
-              <p><strong>Téléphone :</strong> [À compléter]</p>
-            </div>
-
-            <button class="legal-accordion__btn" type="button" aria-expanded="false">
-              <span>Hébergeur du site</span><i>+</i>
-            </button>
-            <div class="legal-accordion__panel">
-              <p><strong>Hébergeur :</strong> Cloudflare, Inc. / Cloudflare France SAS (à vérifier selon ton contrat)</p>
-              <p><strong>Adresse / contact :</strong> [À compléter avec les mentions Cloudflare en vigueur]</p>
-              <p><strong>Domaine :</strong> [ton-domaine.fr]</p>
-            </div>
-
-            <button class="legal-accordion__btn" type="button" aria-expanded="false">
-              <span>Médiation de la consommation</span><i>+</i>
-            </button>
-            <div class="legal-accordion__panel">
-              <p><strong>Médiateur :</strong> [Nom du médiateur agréé CECMC]</p>
-              <p><strong>Site :</strong> [URL]</p>
-              <p><strong>Adresse :</strong> [À compléter]</p>
-              <p><strong>Plateforme RLL :</strong> [Lien ODR UE / RLL]</p>
-            </div>
-
-            <button class="legal-accordion__btn" type="button" aria-expanded="false">
-              <span>Données personnelles & cookies</span><i>+</i>
-            </button>
-            <div class="legal-accordion__panel">
-              <p>La boutique ne crée pas de compte client, mais des données peuvent être traitées via PayPal / Discord / formulaires de ticket.</p>
-              <p>Ajoute une politique de confidentialité distincte : finalités, base légale, durée de conservation, droits CNIL/RGPD, contact.</p>
-              <p>Ajoute une bannière cookies si tu utilises des cookies non exemptés (ex : mesure d’audience, marketing, etc.).</p>
-            </div>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
   <footer class="footer">
     <div class="container footer__inner">
       <div class="footer__brand">
@@ -284,12 +178,30 @@
       <div class="footer__links">
         <button data-switch-tab="coins">AceCoins</button>
         <button data-switch-tab="vehicles">Véhicules</button>
-        <a href="#legal">CGV / Remboursements</a>
-        <a href="#top">Haut de page</a>
+                <a href="#top">Haut de page</a>
       </div>
 
       <div class="footer__copy">© <span id="year"></span> ACEPVP</div>
     </div>
+  
+    <div class="container footer__legal">
+      <div class="footer__legal-card">
+        <div class="footer__legal-head">
+          <span class="footer__pill">Conditions boutique</span>
+          <strong>Politique de remboursement & règles ACEPVP</strong>
+        </div>
+        <p>
+          Une fois l’achat validé et le contenu virtuel livré sur le serveur, aucun remboursement de convenance ne pourra être effectué.
+          Les droits légaux applicables restent réservés (ex. non-livraison ou erreur de transaction).
+        </p>
+        <div class="footer__rules">
+          <span>Ticket Discord obligatoire</span>
+          <span>Pseudo FiveM + preuve PayPal</span>
+          <span>Chargeback abusif refusé</span>
+        </div>
+      </div>
+    </div>
+
   </footer>
 
   <div class="modal" id="vehicleModal" aria-hidden="true">
