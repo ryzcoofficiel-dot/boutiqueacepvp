@@ -186,6 +186,10 @@ window.addEventListener("DOMContentLoaded", () => {
   initCursorGlow();
   initCountUp();
   initScrollProgress();
+  initBackgroundFx();
+  initMagneticButtons();
+  initDigitalConsentLock();
+  initLegalAccordion();
   updateVehicleCount();
 });
 
@@ -201,6 +205,7 @@ function renderCoinCards() {
       <p class="coin-desc">${escapeHtml(pack.description)}</p>
       <ul class="coin-perks">${pack.perks.map((p) => `<li>${escapeHtml(p)}</li>`).join("")}</ul>
       <div class="paypal-slot" id="paypal-hosted-${escapeHtml(pack.hostedButtonId)}"></div>
+      <div class="coin-card__lock">🔒 <strong>Active la validation</strong> ci-dessus pour débloquer le paiement</div>
       <div class="coin-foot">Après paiement : ticket Discord + pseudo FiveM + preuve PayPal.</div>
     </article>
   `).join("");
@@ -533,6 +538,171 @@ function initScrollProgress() {
   update();
   window.addEventListener("scroll", update, { passive: true });
   window.addEventListener("resize", update);
+}
+
+
+function initDigitalConsentLock() {
+  const grid = document.getElementById("coinsGrid");
+  const checkbox = document.getElementById("digitalConsentCheckbox");
+  const key = "acepvp_digital_consent_v1";
+  if (!grid || !checkbox) return;
+
+  try {
+    checkbox.checked = localStorage.getItem(key) === "1";
+  } catch (_) {}
+
+  const apply = () => {
+    const unlocked = checkbox.checked;
+    grid.classList.toggle("is-locked", !unlocked);
+    grid.classList.toggle("is-unlocked", unlocked);
+    try { localStorage.setItem(key, unlocked ? "1" : "0"); } catch (_) {}
+    if (unlocked) showToast("Paiement débloqué • Consentement numérique validé ✅");
+  };
+
+  checkbox.addEventListener("change", apply);
+
+  grid.addEventListener("click", (e) => {
+    if (!checkbox.checked) {
+      const card = e.target.closest(".coin-card");
+      if (!card) return;
+      e.preventDefault();
+      checkbox.focus();
+      showToast("Coche la validation contenu numérique avant de payer.");
+    }
+  }, true);
+
+  apply();
+}
+
+function initLegalAccordion() {
+  const buttons = document.querySelectorAll(".legal-accordion__btn");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const panel = btn.nextElementSibling;
+      if (!panel) return;
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!isOpen));
+      panel.classList.toggle("is-open", !isOpen);
+      panel.style.maxHeight = !isOpen ? `${panel.scrollHeight + 10}px` : "0px";
+    });
+  });
+}
+
+function initMagneticButtons() {
+  if (window.matchMedia("(pointer: coarse)").matches) return;
+  const els = document.querySelectorAll(".btn, .segment__btn, .filter, .legal-accordion__btn");
+  els.forEach((el) => {
+    let raf = 0;
+    el.addEventListener("mousemove", (e) => {
+      const rect = el.getBoundingClientRect();
+      const dx = (e.clientX - (rect.left + rect.width / 2)) / rect.width;
+      const dy = (e.clientY - (rect.top + rect.height / 2)) / rect.height;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        el.style.transform = `translate(${(dx * 5).toFixed(2)}px, ${(dy * 4).toFixed(2)}px)`;
+      });
+      el.style.setProperty("--mx", `${((e.clientX - rect.left) / rect.width) * 100}%`);
+      el.style.setProperty("--my", `${((e.clientY - rect.top) / rect.height) * 100}%`);
+    });
+    el.addEventListener("mouseleave", () => {
+      cancelAnimationFrame(raf);
+      el.style.transform = "";
+    });
+  });
+}
+
+function initBackgroundFx() {
+  const canvas = document.getElementById("fxCanvas");
+  if (!canvas) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+  let w = 0, h = 0, raf = 0;
+  let pointer = { x: -9999, y: -9999 };
+  let nodes = [];
+
+  const resize = () => {
+    w = canvas.clientWidth = window.innerWidth;
+    h = canvas.clientHeight = window.innerHeight;
+    canvas.width = Math.round(w * DPR);
+    canvas.height = Math.round(h * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    const density = w < 700 ? 26 : w < 1100 ? 36 : 48;
+    nodes = Array.from({ length: density }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.18,
+      vy: (Math.random() - 0.5) * 0.18,
+      r: 0.7 + Math.random() * 1.35
+    }));
+  };
+
+  const draw = () => {
+    ctx.clearRect(0, 0, w, h);
+
+    const grad = ctx.createRadialGradient(pointer.x, pointer.y, 10, pointer.x, pointer.y, 260);
+    grad.addColorStop(0, "rgba(143,93,255,0.10)");
+    grad.addColorStop(0.45, "rgba(116,222,255,0.035)");
+    grad.addColorStop(1, "rgba(143,93,255,0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      a.x += a.vx;
+      a.y += a.vy;
+
+      if (a.x < -10) a.x = w + 10;
+      if (a.x > w + 10) a.x = -10;
+      if (a.y < -10) a.y = h + 10;
+      if (a.y > h + 10) a.y = -10;
+
+      const dxp = a.x - pointer.x;
+      const dyp = a.y - pointer.y;
+      const dp = Math.hypot(dxp, dyp);
+      if (dp < 140) {
+        a.x += (dxp / (dp || 1)) * 0.18;
+        a.y += (dyp / (dp || 1)) * 0.18;
+      }
+
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(222, 220, 255, 0.28)";
+      ctx.fill();
+    }
+
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d = Math.hypot(dx, dy);
+        if (d > 120) continue;
+        const alpha = (1 - d / 120) * 0.085;
+        ctx.strokeStyle = `rgba(143,93,255,${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+
+    raf = requestAnimationFrame(draw);
+  };
+
+  const onMove = (e) => { pointer = { x: e.clientX, y: e.clientY }; };
+  const onLeave = () => { pointer = { x: -9999, y: -9999 }; };
+
+  resize();
+  draw();
+
+  window.addEventListener("resize", resize);
+  window.addEventListener("mousemove", onMove, { passive: true });
+  window.addEventListener("mouseout", onLeave);
 }
 
 function showToast(message) {
