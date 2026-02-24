@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Boutique ACEPVP | FiveM</title>
-  <meta name="description" content="Boutique officielle ACEPVP FiveM - Packs AceCoins via PayPal." />
+  <title>Boutique ACEPVP | AceCoins & Véhicules blindés</title>
+  <meta name="description" content="Boutique ACEPVP FiveM : packs AceCoins PayPal et catalogue premium de véhicules blindés." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css" />
 
@@ -17,86 +17,169 @@
   <script src="script.js" defer></script>
 </head>
 <body>
-  <div class="bg-layer" aria-hidden="true"></div>
+  <div class="bg"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="orbs" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
 
-  <header class="hero">
+  <header class="hero" id="top">
     <div class="hero__overlay"></div>
-    <div class="hero__content container">
-      <div class="hero__brand">
+    <div class="container hero__container">
+      <div class="hero__panel reveal">
         <img src="images/ui/ace_logo.png" alt="ACEPVP" class="hero__logo" />
-        <div>
-          <p class="hero__eyebrow">Serveur FiveM</p>
+        <div class="hero__content">
+          <p class="hero__eyebrow">Serveur FiveM • Store Premium</p>
           <h1 class="hero__title">Boutique ACEPVP</h1>
           <p class="hero__subtitle">
-            Achetez vos <strong>AceCoins</strong> en quelques clics et récupérez vos gains via Discord.
+            Packs <strong>AceCoins</strong> avec paiement PayPal + catalogue <strong>véhicules blindés</strong> avec popup détail premium.
           </p>
+          <div class="hero__chips">
+            <span>PayPal sécurisé</span>
+            <span>9 véhicules blindés</span>
+            <span>Support Discord</span>
+          </div>
+          <div class="hero__actions">
+            <button class="btn btn--primary" data-switch-tab="coins">Acheter des AceCoins</button>
+            <button class="btn btn--ghost" data-switch-tab="vehicles">Voir les véhicules</button>
+          </div>
         </div>
-      </div>
-
-      <div class="hero__actions">
-        <a href="#packs" class="btn btn--primary">Acheter des packs</a>
-        <a href="https://discord.gg/acepvp" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Discord ACEPVP</a>
       </div>
     </div>
   </header>
 
-  <main class="container">
-    <section class="claim-box" aria-label="Instructions de réclamation">
-      <h2>Comment récupérer vos AceCoins</h2>
-      <p>
-        Après votre paiement PayPal, ouvrez un <strong>ticket sur le Discord ACEPVP</strong>
-        et envoyez votre <strong>pseudo FiveM</strong> ainsi que votre <strong>preuve de paiement</strong>.
-      </p>
+  <main class="container main-wrap">
+    <section class="announcement reveal">
+      <div class="announcement__icon">✦</div>
+      <div>
+        <h2>Réclamation des achats</h2>
+        <p>
+          Après votre achat, ouvrez un <strong>ticket sur Discord</strong> avec votre <strong>pseudo FiveM</strong> et votre <strong>preuve de paiement</strong>.
+          Les véhicules blindés sont traités manuellement par le staff.
+        </p>
+      </div>
     </section>
 
-    <section id="packs" class="packs">
-      <div class="section-head">
-        <h2>Packs AceCoins</h2>
-        <p>Paiement sécurisé via PayPal</p>
-      </div>
-
-      <div id="packsGrid" class="packs-grid" aria-live="polite"></div>
+    <section class="segment reveal" id="segmentBar" aria-label="Catégories boutique">
+      <button class="segment__btn is-active" data-tab="coins">AceCoins</button>
+      <button class="segment__btn" data-tab="vehicles">Véhicules blindés</button>
+      <span class="segment__thumb" id="segmentThumb" aria-hidden="true"></span>
     </section>
 
-    <section class="faq">
-      <div class="faq-card">
-        <h3>Questions fréquentes</h3>
-        <div class="faq-item">
-          <h4>Combien de temps pour recevoir mes AceCoins ?</h4>
-          <p>En général, quelques minutes après validation par le staff sur Discord (selon disponibilité).</p>
+    <section class="panel is-active" data-panel="coins" id="panelCoins">
+      <div class="section-head reveal">
+        <div>
+          <p class="section-head__eyebrow">Paiement instantané</p>
+          <h2>Packs AceCoins</h2>
         </div>
-        <div class="faq-item">
-          <h4>Que fournir dans le ticket ?</h4>
-          <p>Votre pseudo FiveM + une capture / reçu PayPal du paiement.</p>
+        <p class="section-head__desc">Choisissez un pack puis payez avec PayPal. La livraison se fait via ticket Discord.</p>
+      </div>
+      <div class="coins-grid" id="coinsGrid"></div>
+    </section>
+
+    <section class="panel" data-panel="vehicles" id="panelVehicles">
+      <div class="section-head reveal">
+        <div>
+          <p class="section-head__eyebrow">Collection blindée</p>
+          <h2>Catalogue véhicules premium</h2>
         </div>
-        <div class="faq-item">
-          <h4>Je me suis trompé de pseudo</h4>
-          <p>Ouvrez un ticket rapidement et précisez le bon pseudo avant traitement.</p>
+        <p class="section-head__desc">9 modèles blindés • popup détail • réservation via ticket Discord</p>
+      </div>
+
+      <div class="vehicle-toolbar reveal">
+        <div class="vehicle-filters" role="tablist" aria-label="Filtres véhicules">
+          <button class="filter is-active" data-filter="all">Tous</button>
+          <button class="filter" data-filter="epic">Épique</button>
+          <button class="filter" data-filter="legendary">Prestige</button>
+          <button class="filter" data-filter="budget">≤ 3999 AC</button>
+        </div>
+        <div class="vehicle-toolbar__right">
+          <input id="vehicleSearch" type="text" placeholder="Rechercher un véhicule..." aria-label="Rechercher un véhicule" />
+          <span id="vehicleCount" class="vehicle-count"></span>
         </div>
       </div>
+
+      <div class="vehicles-grid" id="vehiclesGrid"></div>
+    </section>
+
+    <section class="cta-panel reveal">
+      <div>
+        <h3>Besoin d'aide ou d'un achat véhicule ?</h3>
+        <p>Ouvre un ticket, indique le modèle voulu et ton pseudo FiveM. Le staff ACEPVP te répond rapidement.</p>
+      </div>
+      <a class="btn btn--primary" href="https://discord.gg/acepvp" target="_blank" rel="noopener noreferrer">Discord ACEPVP</a>
     </section>
   </main>
 
   <footer class="footer">
     <div class="container footer__inner">
       <div class="footer__brand">
-        <img src="images/ui/ace_logo.png" alt="ACEPVP" class="footer__logo" />
+        <img src="images/ui/ace_logo.png" alt="ACEPVP">
         <div>
-          <p class="footer__title">ACEPVP</p>
-          <p class="footer__subtitle">Boutique officielle FiveM</p>
+          <p>ACEPVP</p>
+          <span>Boutique FiveM Premium</span>
         </div>
       </div>
-
-      <div class="footer__links">
-        <a href="https://discord.gg/acepvp" target="_blank" rel="noopener noreferrer">Discord</a>
-        <span>•</span>
-        <a href="#packs">Packs</a>
+      <div class="footer__nav">
+        <button data-switch-tab="coins">AceCoins</button>
+        <button data-switch-tab="vehicles">Véhicules</button>
+        <a href="#top">Haut de page</a>
       </div>
-
-      <p class="footer__copy">© <span id="year"></span> ACEPVP</p>
+      <div class="footer__copy">© <span id="year"></span> ACEPVP</div>
     </div>
   </footer>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <!-- Modal détail véhicule -->
+  <div class="modal" id="vehicleModal" aria-hidden="true">
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalVehicleTitle">
+      <button class="modal__close" type="button" data-close-modal aria-label="Fermer">×</button>
+      <div class="modal__media">
+        <img id="modalVehicleImage" src="" alt="" />
+        <div class="modal__mediaShade"></div>
+        <div class="modal__badgeRow">
+          <span id="modalVehicleRarity" class="rarity-badge"></span>
+          <span class="rarity-badge rarity-badge--dark">Blindé</span>
+        </div>
+      </div>
+      <div class="modal__content">
+        <div class="modal__head">
+          <p class="modal__eyebrow" id="modalVehicleResource"></p>
+          <h3 id="modalVehicleTitle"></h3>
+          <p id="modalVehicleDesc" class="modal__desc"></p>
+        </div>
+
+        <div class="modal__priceRow">
+          <div>
+            <span class="small-label">Prix boutique</span>
+            <div id="modalVehiclePrice" class="modal__price"></div>
+          </div>
+          <div>
+            <span class="small-label">Spawn name</span>
+            <div id="modalVehicleSpawn" class="modal__spawn"></div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div><span>Blindage</span><strong id="modalStatArmor"></strong></div>
+          <div><span>Vitesse</span><strong id="modalStatSpeed"></strong></div>
+          <div><span>Accélération</span><strong id="modalStatAccel"></strong></div>
+          <div><span>Maniabilité</span><strong id="modalStatHandling"></strong></div>
+        </div>
+
+        <div class="modal__features">
+          <h4>Points forts</h4>
+          <ul id="modalFeatureList"></ul>
+        </div>
+
+        <div class="modal__actions">
+          <a id="modalDiscordBtn" class="btn btn--primary" href="https://discord.gg/acepvp" target="_blank" rel="noopener noreferrer">Réserver via Discord</a>
+          <button class="btn btn--ghost" type="button" data-close-modal>Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
