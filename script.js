@@ -169,7 +169,8 @@ const OFFERS = [
     id: "unban",
     name: "Unban ACEPVP",
     image: "images/products/unban.png",
-    priceCoins: 5000,
+    hostedButtonId: "ZG7G3JEHYA3AE",
+    priceLabel: "PayPal",
     badge: { label: "Service", key: "service" },
     description: "Levée de ban sur le serveur ACEPVP pour revenir jouer rapidement.",
     includes: [
@@ -177,7 +178,7 @@ const OFFERS = [
       "Vérification & validation staff",
       "Traitement via ticket Discord"
     ],
-    template: "Bonjour, je souhaite acheter : **UNBAN (5000 AceCoins)**.\nPseudo FiveM : \nID joueur / license : \nPreuve (screenshot solde AC ou transaction) : \nMerci."
+    template: "Bonjour, je viens d'effectuer le paiement PayPal pour : **UNBAN**.\nPseudo FiveM : \nID joueur / license : \nTransaction PayPal (si demandé) : \nMerci."
   },
   {
     id: "vip",
@@ -295,17 +296,18 @@ function renderOfferCards() {
           <span class="chip ${offerChipClass(o.badge.key)}">${escapeHtml(o.badge.label)}</span>
           ${o.highlight ? '<span class="chip chip--deal">Meilleur choix</span>' : ''}
         </div>
-        <div class="offer-priceTag">${formatNumber(o.priceCoins)} AC</div>
+        ${renderOfferPriceTag(o)}
       </div>
       <div class="offer-body">
         <h3 class="offer-title">${escapeHtml(o.name)}</h3>
         <p class="offer-desc">${escapeHtml(o.description)}</p>
         <ul class="offer-includes">${o.includes.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
-        <div class="offer-actions">
+        <div class="offer-actions ${o.hostedButtonId ? "offer-actions--paypal" : ""}">
+          ${o.hostedButtonId ? `<div class="paypal-slot paypal-slot--offer" id="paypal-offer-${escapeHtml(o.hostedButtonId)}"></div>` : ""}
           <a class="btn btn--primary" href="${DISCORD_INVITE}" target="_blank" rel="noopener noreferrer">Ouvrir un ticket</a>
           <button class="btn btn--glass" type="button" data-copy-offer="${escapeHtml(o.id)}">Copier le message</button>
         </div>
-        <div class="offer-foot">Réclamation : ticket Discord • pseudo FiveM • preuve / solde AC</div>
+        <div class="offer-foot">${o.hostedButtonId ? "Réclamation : ticket Discord • pseudo FiveM • preuve PayPal" : "Réclamation : ticket Discord • pseudo FiveM • preuve / solde AC"}</div>
       </div>
     </article>
   `).join("");
@@ -351,6 +353,16 @@ function offerChipClass(key) {
   return "chip--service";
 }
 
+function renderOfferPriceTag(offer) {
+  if (typeof offer.priceCoins === "number") {
+    return `<div class="offer-priceTag">${formatNumber(offer.priceCoins)} AC</div>`;
+  }
+  if (offer.priceLabel) {
+    return `<div class="offer-priceTag">${escapeHtml(offer.priceLabel)}</div>`;
+  }
+  return "";
+}
+
 function getSortedVehicles(list) {
   const copy = [...list];
   if (currentVehicleSort === "price-asc") copy.sort((a, b) => a.priceCoins - b.priceCoins);
@@ -362,8 +374,8 @@ function getSortedVehicles(list) {
 
 function initPayPalHostedButtons() {
   const ready = window.paypal && typeof window.paypal.HostedButtons === "function";
-  COIN_PACKS.forEach((pack) => {
-    const mountId = `paypal-hosted-${pack.hostedButtonId}`;
+
+  const renderHosted = (hostedButtonId, mountId) => {
     const mount = document.getElementById(mountId);
     if (!mount) return;
 
@@ -373,12 +385,15 @@ function initPayPalHostedButtons() {
     }
 
     try {
-      window.paypal.HostedButtons({ hostedButtonId: pack.hostedButtonId }).render(`#${cssEsc(mountId)}`);
+      window.paypal.HostedButtons({ hostedButtonId }).render(`#${cssEsc(mountId)}`);
     } catch (err) {
       console.error("HostedButtons error", err);
       mount.innerHTML = `<div class="paypal-fallback">Impossible de charger ce bouton. Contacte le staff via <a href="${DISCORD_INVITE}" target="_blank" rel="noopener noreferrer">Discord</a>.</div>`;
     }
-  });
+  };
+
+  COIN_PACKS.forEach((pack) => renderHosted(pack.hostedButtonId, `paypal-hosted-${pack.hostedButtonId}`));
+  OFFERS.filter((o) => o.hostedButtonId).forEach((o) => renderHosted(o.hostedButtonId, `paypal-offer-${o.hostedButtonId}`));
 
   showToast("Boutique ACEPVP en ligne ✅");
 }

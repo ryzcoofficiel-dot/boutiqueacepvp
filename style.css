@@ -1071,6 +1071,13 @@ body.modal-open { overflow: hidden; }
   gap: 8px;
   margin-top: auto;
 }
+.offer-actions--paypal .paypal-slot {
+  grid-column: 1 / -1;
+}
+.paypal-slot--offer {
+  padding: 6px;
+  min-height: 48px;
+}
 .offer-foot {
   color: var(--muted);
   font-size: .82rem;
