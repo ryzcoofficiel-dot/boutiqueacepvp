@@ -164,6 +164,38 @@ const VEHICLES = [
   }
 ];
 
+const OFFERS = [
+  {
+    id: "unban",
+    name: "Unban ACEPVP",
+    image: "images/products/unban.png",
+    priceCoins: 5000,
+    badge: { label: "Service", key: "service" },
+    description: "Levée de ban sur le serveur ACEPVP pour revenir jouer rapidement.",
+    includes: [
+      "Unban (1 compte / 1 joueur)",
+      "Vérification & validation staff",
+      "Traitement via ticket Discord"
+    ],
+    template: "Bonjour, je souhaite acheter : **UNBAN (5000 AceCoins)**.\nPseudo FiveM : \nID joueur / license : \nPreuve (screenshot solde AC ou transaction) : \nMerci."
+  },
+  {
+    id: "vip",
+    name: "VIP AcePvP",
+    image: "images/products/vip_acepvp.png",
+    priceCoins: 2000,
+    badge: { label: "VIP", key: "vip" },
+    highlight: true,
+    description: "Pack VIP AcePvP : un setup prêt pour le PVP et les déplacements protégés.",
+    includes: [
+      "Kuruma blindée (semi-blindé)",
+      "10× Micro SMG",
+      "Munitions Micro SMG incluses"
+    ],
+    template: "Bonjour, je souhaite acheter : **VIP ACEPVP (2000 AceCoins)**.\nPseudo FiveM : \nID joueur / license : \nPreuve (screenshot solde AC ou transaction) : \nMerci."
+  }
+];
+
 let currentVehicleFilter = "all";
 let currentVehicleSearch = "";
 let currentVehicleSort = "featured";
@@ -174,6 +206,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   renderCoinCards();
   renderVehicleCards();
+  renderOfferCards();
   initTabs();
   initQuickTabButtons();
   initVehicleFilters();
@@ -247,6 +280,75 @@ function renderVehicleCards() {
   initReveal();
   initTiltCards();
   applyVehicleFilters();
+}
+
+function renderOfferCards() {
+  const grid = document.getElementById("offersGrid");
+  if (!grid) return;
+
+  grid.innerHTML = OFFERS.map((o, i) => `
+    <article class="offer-card reveal ${o.highlight ? "is-highlight" : ""}" style="--reveal-delay:${i * 55}">
+      <div class="offer-card__imgWrap">
+        <div class="offer-card__glow" aria-hidden="true"></div>
+        <img src="${escapeHtml(o.image)}" alt="${escapeHtml(o.name)}" loading="lazy" onerror="this.src='images/ui/ace_logo.png'">
+        <div class="offer-badges">
+          <span class="chip ${offerChipClass(o.badge.key)}">${escapeHtml(o.badge.label)}</span>
+          ${o.highlight ? '<span class="chip chip--deal">Meilleur choix</span>' : ''}
+        </div>
+        <div class="offer-priceTag">${formatNumber(o.priceCoins)} AC</div>
+      </div>
+      <div class="offer-body">
+        <h3 class="offer-title">${escapeHtml(o.name)}</h3>
+        <p class="offer-desc">${escapeHtml(o.description)}</p>
+        <ul class="offer-includes">${o.includes.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        <div class="offer-actions">
+          <a class="btn btn--primary" href="${DISCORD_INVITE}" target="_blank" rel="noopener noreferrer">Ouvrir un ticket</a>
+          <button class="btn btn--glass" type="button" data-copy-offer="${escapeHtml(o.id)}">Copier le message</button>
+        </div>
+        <div class="offer-foot">Réclamation : ticket Discord • pseudo FiveM • preuve / solde AC</div>
+      </div>
+    </article>
+  `).join("");
+
+  grid.querySelectorAll("[data-copy-offer]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const offer = OFFERS.find((x) => x.id === btn.dataset.copyOffer);
+      if (!offer) return;
+      const ok = await copyToClipboard(offer.template);
+      showToast(ok ? "Message copié ✅" : "Copie impossible (sélectionne et copie manuellement)");
+    });
+  });
+
+  initReveal();
+  initTiltCards();
+}
+
+async function copyToClipboard(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.top = "-9999px";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+function offerChipClass(key) {
+  if (key === "vip") return "chip--vip";
+  return "chip--service";
 }
 
 function getSortedVehicles(list) {
@@ -457,7 +559,7 @@ function initReveal() {
 }
 
 function initTiltCards() {
-  const cards = document.querySelectorAll(".coin-card, .vehicle-card");
+  const cards = document.querySelectorAll(".coin-card, .vehicle-card, .offer-card");
   cards.forEach((card) => {
     if (card.dataset.tiltInit === "1") return;
     card.dataset.tiltInit = "1";
