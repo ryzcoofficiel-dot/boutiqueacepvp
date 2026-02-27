@@ -949,6 +949,19 @@ body.modal-open { overflow: hidden; }
   transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
   transition: transform .2s ease, box-shadow .22s ease, border-color .22s ease;
 }
+
+/* Variante "PayPal only" : on ne garde que le widget PayPal (pas d'image / description au-dessus) */
+.offer-card--paypalOnly {
+  grid-template-rows: 1fr;
+  min-height: 0;
+}
+.offer-body--paypalOnly {
+  padding: 14px;
+  justify-content: center;
+}
+.offer-card--paypalOnly .paypal-slot--offer {
+  padding: 0;
+}
 .offer-card::after {
   content: "";
   position: absolute;

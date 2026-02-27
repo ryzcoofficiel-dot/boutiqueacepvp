@@ -167,6 +167,8 @@ const VEHICLES = [
 const OFFERS = [
   {
     id: "unban",
+    // Unban = paiement PayPal uniquement (pas d'infos en double au-dessus)
+    paypalOnly: true,
     name: "Unban ACEPVP",
     image: "images/products/unban.png",
     hostedButtonId: "ZG7G3JEHYA3AE",
@@ -287,30 +289,45 @@ function renderOfferCards() {
   const grid = document.getElementById("offersGrid");
   if (!grid) return;
 
-  grid.innerHTML = OFFERS.map((o, i) => `
-    <article class="offer-card reveal ${o.highlight ? "is-highlight" : ""}" style="--reveal-delay:${i * 55}">
-      <div class="offer-card__imgWrap">
-        <div class="offer-card__glow" aria-hidden="true"></div>
-        <img src="${escapeHtml(o.image)}" alt="${escapeHtml(o.name)}" loading="lazy" onerror="this.src='images/ui/ace_logo.png'">
-        <div class="offer-badges">
-          <span class="chip ${offerChipClass(o.badge.key)}">${escapeHtml(o.badge.label)}</span>
-          ${o.highlight ? '<span class="chip chip--deal">Meilleur choix</span>' : ''}
+  const renderOne = (o, i) => {
+    // Mode PayPal only : on affiche uniquement le bouton PayPal (les infos sont déjà dans le hosted button)
+    if (o.paypalOnly && o.hostedButtonId) {
+      return `
+        <article class="offer-card offer-card--paypalOnly reveal" style="--reveal-delay:${i * 55}">
+          <div class="offer-body offer-body--paypalOnly">
+            <div class="paypal-slot paypal-slot--offer" id="paypal-offer-${escapeHtml(o.hostedButtonId)}"></div>
+          </div>
+        </article>
+      `;
+    }
+
+    return `
+      <article class="offer-card reveal ${o.highlight ? "is-highlight" : ""}" style="--reveal-delay:${i * 55}">
+        <div class="offer-card__imgWrap">
+          <div class="offer-card__glow" aria-hidden="true"></div>
+          <img src="${escapeHtml(o.image)}" alt="${escapeHtml(o.name)}" loading="lazy" onerror="this.src='images/ui/ace_logo.png'">
+          <div class="offer-badges">
+            <span class="chip ${offerChipClass(o.badge.key)}">${escapeHtml(o.badge.label)}</span>
+            ${o.highlight ? '<span class="chip chip--deal">Meilleur choix</span>' : ''}
+          </div>
+          ${renderOfferPriceTag(o)}
         </div>
-        ${renderOfferPriceTag(o)}
-      </div>
-      <div class="offer-body">
-        <h3 class="offer-title">${escapeHtml(o.name)}</h3>
-        <p class="offer-desc">${escapeHtml(o.description)}</p>
-        <ul class="offer-includes">${o.includes.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
-        <div class="offer-actions ${o.hostedButtonId ? "offer-actions--paypal" : ""}">
-          ${o.hostedButtonId ? `<div class="paypal-slot paypal-slot--offer" id="paypal-offer-${escapeHtml(o.hostedButtonId)}"></div>` : ""}
-          <a class="btn btn--primary" href="${DISCORD_INVITE}" target="_blank" rel="noopener noreferrer">Ouvrir un ticket</a>
-          <button class="btn btn--glass" type="button" data-copy-offer="${escapeHtml(o.id)}">Copier le message</button>
+        <div class="offer-body">
+          <h3 class="offer-title">${escapeHtml(o.name)}</h3>
+          <p class="offer-desc">${escapeHtml(o.description)}</p>
+          <ul class="offer-includes">${o.includes.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+          <div class="offer-actions ${o.hostedButtonId ? "offer-actions--paypal" : ""}">
+            ${o.hostedButtonId ? `<div class="paypal-slot paypal-slot--offer" id="paypal-offer-${escapeHtml(o.hostedButtonId)}"></div>` : ""}
+            <a class="btn btn--primary" href="${DISCORD_INVITE}" target="_blank" rel="noopener noreferrer">Ouvrir un ticket</a>
+            <button class="btn btn--glass" type="button" data-copy-offer="${escapeHtml(o.id)}">Copier le message</button>
+          </div>
+          <div class="offer-foot">${o.hostedButtonId ? "Réclamation : ticket Discord • pseudo FiveM • preuve PayPal" : "Réclamation : ticket Discord • pseudo FiveM • preuve / solde AC"}</div>
         </div>
-        <div class="offer-foot">${o.hostedButtonId ? "Réclamation : ticket Discord • pseudo FiveM • preuve PayPal" : "Réclamation : ticket Discord • pseudo FiveM • preuve / solde AC"}</div>
-      </div>
-    </article>
-  `).join("");
+      </article>
+    `;
+  };
+
+  grid.innerHTML = OFFERS.map((o, i) => renderOne(o, i)).join("");
 
   grid.querySelectorAll("[data-copy-offer]").forEach((btn) => {
     btn.addEventListener("click", async () => {
