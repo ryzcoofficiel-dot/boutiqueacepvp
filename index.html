@@ -65,12 +65,14 @@
           <div class="hero__chips">
             <span>Paiement PayPal</span>
             <span>Catalogue blindés</span>
+            <span>VIP &amp; Services</span>
             <span>Support Discord</span>
           </div>
 
           <div class="hero__actions">
             <button class="btn btn--primary" data-switch-tab="coins">Acheter des AceCoins</button>
             <button class="btn btn--glass" data-switch-tab="vehicles">Voir les véhicules</button>
+            <button class="btn btn--glass" data-switch-tab="offers">VIP &amp; Services</button>
           </div>
         </div>
       </div>
@@ -99,6 +101,10 @@
       <button class="segment__btn" data-tab="vehicles">
         <span class="segment__label">Véhicules blindés</span>
         <small>9 modèles premium</small>
+      </button>
+      <button class="segment__btn" data-tab="offers">
+        <span class="segment__label">VIP &amp; Services</span>
+        <small>2 offres premium</small>
       </button>
       <span class="segment__thumb" id="segmentThumb" aria-hidden="true"></span>
     </section>
@@ -151,6 +157,29 @@
       </div>
     </section>
 
+
+    <section class="panel" data-panel="offers" id="panelOffers">
+      <div class="panel-shell reveal panel-shell--offers">
+        <div class="section-head">
+          <div>
+            <p class="section-head__eyebrow">Avantages &amp; services</p>
+            <h2>VIP &amp; Services</h2>
+          </div>
+          <p class="section-head__desc">
+            Unban et pack VIP ACEPVP. Réclamation rapide via ticket Discord.
+          </p>
+        </div>
+
+        <div class="panel-note" aria-label="Informations de réclamation">
+          <span>Livraison via staff</span>
+          <span>Pseudo FiveM requis</span>
+          <span>Preuve / solde AC</span>
+        </div>
+
+        <div class="offers-grid" id="offersGrid"></div>
+      </div>
+    </section>
+
     <section class="cta-lux reveal">
       <div class="cta-lux__shine" aria-hidden="true"></div>
       <div>
@@ -161,6 +190,7 @@
       <div class="cta-lux__actions">
         <a class="btn btn--primary" href="https://discord.gg/acepvp" target="_blank" rel="noopener noreferrer">Ouvrir un ticket</a>
         <button class="btn btn--glass" data-switch-tab="coins">Retour packs AceCoins</button>
+        <button class="btn btn--glass" data-switch-tab="offers">VIP &amp; Services</button>
       </div>
     </section>
   </main>
@@ -178,7 +208,8 @@
       <div class="footer__links">
         <button data-switch-tab="coins">AceCoins</button>
         <button data-switch-tab="vehicles">Véhicules</button>
-                <a href="#top">Haut de page</a>
+        <button data-switch-tab="offers">VIP &amp; Services</button>
+        <a href="#top">Haut de page</a>
       </div>
 
       <div class="footer__copy">© <span id="year"></span> ACEPVP</div>
