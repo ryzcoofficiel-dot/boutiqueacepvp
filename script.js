@@ -1,6 +1,6 @@
 
 const DISCORD_INVITE = "https://discord.gg/acepvp";
-const RATINGS_API_BASE = "https://YOUR_WORKER_SUBDOMAIN.workers.dev";
+const RATINGS_API_BASE = "https://acepvp-ratings.ryzcoofficiel.workers.dev";
 
 const COIN_PACKS = [
   {
