@@ -1,5 +1,6 @@
 
 const DISCORD_INVITE = "https://discord.gg/acepvp";
+const RATINGS_API_BASE = "https://YOUR_WORKER_SUBDOMAIN.workers.dev";
 
 const COIN_PACKS = [
   {
@@ -203,6 +204,7 @@ let currentVehicleFilter = "all";
 let currentVehicleSearch = "";
 let currentVehicleSort = "featured";
 let toastTimer = null;
+let ratingsCache = null;
 
 window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("year").textContent = new Date().getFullYear();
@@ -226,6 +228,7 @@ window.addEventListener("DOMContentLoaded", () => {
   initStarfield();
   initMagneticButtons();
   updateVehicleCount();
+  initRatings();
 });
 
 function renderCoinCards() {
@@ -237,12 +240,15 @@ function renderCoinCards() {
         <div class="coin-price"><strong>${escapeHtml(pack.priceLabel)}</strong><span>${formatNumber(pack.amount)} AC</span></div>
       </div>
       <h3 class="coin-title">${escapeHtml(pack.title)}</h3>
+      <div class="product-rating" data-rating-id="coins_${pack.amount}" aria-label="Note moyenne"></div>
       <p class="coin-desc">${escapeHtml(pack.description)}</p>
       <ul class="coin-perks">${pack.perks.map((p) => `<li>${escapeHtml(p)}</li>`).join("")}</ul>
       <div class="paypal-slot" id="paypal-hosted-${escapeHtml(pack.hostedButtonId)}"></div>
       <div class="coin-foot">Réclamation : ticket Discord • pseudo FiveM • preuve PayPal</div>
     </article>
   `).join("");
+
+  applyRatingsToDom();
 }
 
 function renderVehicleCards() {
@@ -262,6 +268,7 @@ function renderVehicleCards() {
       </div>
       <div class="vehicle-body">
         <h3 class="vehicle-title">${escapeHtml(v.name)}</h3>
+        <div class="product-rating" data-rating-id="vehicle_${escapeHtml(v.resource)}" aria-label="Note moyenne"></div>
         <p class="vehicle-desc">${escapeHtml(v.description)}</p>
         <div class="vehicle-meta">
           <div><span>Blindage</span><strong>${escapeHtml(v.stats.armor)}</strong></div>
@@ -283,6 +290,7 @@ function renderVehicleCards() {
   initReveal();
   initTiltCards();
   applyVehicleFilters();
+  applyRatingsToDom();
 }
 
 function renderOfferCards() {
@@ -295,6 +303,7 @@ function renderOfferCards() {
       return `
         <article class="offer-card offer-card--paypalOnly reveal" style="--reveal-delay:${i * 55}">
           <div class="offer-body offer-body--paypalOnly">
+            <div class="product-rating" data-rating-id="offer_${escapeHtml(o.id)}" aria-label="Note moyenne"></div>
             <div class="paypal-slot paypal-slot--offer" id="paypal-offer-${escapeHtml(o.hostedButtonId)}"></div>
           </div>
         </article>
@@ -314,6 +323,7 @@ function renderOfferCards() {
         </div>
         <div class="offer-body">
           <h3 class="offer-title">${escapeHtml(o.name)}</h3>
+          <div class="product-rating" data-rating-id="offer_${escapeHtml(o.id)}" aria-label="Note moyenne"></div>
           <p class="offer-desc">${escapeHtml(o.description)}</p>
           <ul class="offer-includes">${o.includes.map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
           <div class="offer-actions ${o.hostedButtonId ? "offer-actions--paypal" : ""}">
@@ -340,6 +350,45 @@ function renderOfferCards() {
 
   initReveal();
   initTiltCards();
+  applyRatingsToDom();
+}
+
+async function initRatings() {
+  ratingsCache = null;
+  applyRatingsToDom();
+
+  const base = (RATINGS_API_BASE || "").trim();
+  if (!base || base.includes("YOUR_WORKER_SUBDOMAIN")) return;
+
+  try {
+    const res = await fetch(`${base.replace(/\/$/, "")}/ratings`, { method: "GET" });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !data.ok) return;
+    ratingsCache = data.items || {};
+    applyRatingsToDom();
+  } catch {}
+}
+
+function applyRatingsToDom() {
+  document.querySelectorAll("[data-rating-id]").forEach((mount) => {
+    const id = mount.getAttribute("data-rating-id") || "";
+    const avg = ratingsCache && ratingsCache[id] && typeof ratingsCache[id].avg === "number" ? ratingsCache[id].avg : 5;
+    mount.innerHTML = starsBar(avg);
+    mount.style.setProperty("--rating-pct", `${Math.max(0, Math.min(100, (avg / 5) * 100))}%`);
+    mount.setAttribute("aria-label", `Note moyenne ${Math.round(avg * 10) / 10}/5`);
+  });
+}
+
+function starsBar(avg) {
+  const label = Math.round(avg * 10) / 10;
+  return `
+    <span class="stars" aria-hidden="true">
+      <span class="stars__back">★★★★★</span>
+      <span class="stars__front">★★★★★</span>
+    </span>
+    <span class="stars__sr">${label}/5</span>
+  `;
 }
 
 async function copyToClipboard(text) {
