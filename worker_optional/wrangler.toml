@@ -1,0 +1,10 @@
+name = "paypaldiscordworkeracepvp"
+main = "src/index.js"
+compatibility_date = "2025-11-05"
+workers_dev = true
+
+[vars]
+SHOP_NAME = "ACEPVP"
+ALLOWED_ORIGIN = "*"
+PAYPAL_WEBHOOK_ID = "1AA63081VC736611N"
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1475468409968922745/k6FecaE3nTIi4iROsRURu110kJ28QLVG0DZYsKrNhFftMg9aGvw7sZ_xmcFonNDgooLi"
