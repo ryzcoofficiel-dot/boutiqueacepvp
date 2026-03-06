@@ -1,239 +1,360 @@
-const PRODUCTS = [
-  { id: 'ac500', type: 'coins', name: '500 AceCoins', price: 5, icon: '🪙', perks: ['Petit pack', 'Livraison via Discord', 'Parfait pour tester'] },
-  { id: 'ac1000', type: 'coins', name: '1000 AceCoins', price: 10, icon: '💰', perks: ['Pack standard', 'Bon rapport quantité/prix', 'Livraison via Discord'] },
-  { id: 'ac2000', type: 'coins', name: '2000 AceCoins', price: 20, icon: '✨', perks: ['Pack conseillé', 'Correspond au VIP', 'Livraison via Discord'] },
-  { id: 'ac5000', type: 'coins', name: '5000 AceCoins', price: 50, icon: '🚀', perks: ['Pack premium', 'Pour gros achats', 'Livraison via Discord'] },
-  { id: 'ac10000', type: 'coins', name: '10000 AceCoins', price: 100, icon: '👑', perks: ['Très gros pack', 'Réserve idéale', 'Livraison via Discord'] },
-  { id: 'unban', type: 'service', name: 'Unban ACEPVP', price: 50, icon: '🔓', perks: ['Traitement staff', 'Demande via Discord', 'Preuve PayPal requise'] }
+const SHOP = window.SHOP_CONFIG || {};
+
+const PACKS = [
+  { id: 'ac500', name: '500 AceCoins', price: 5, image: 'images/packs/pack_500.png', description: 'Petit pack pour commencer rapidement.', chips: ['Paiement PayPal', 'Livraison via ticket', 'Instantané'] },
+  { id: 'ac1000', name: '1000 AceCoins', price: 10, image: 'images/packs/pack_1000.png', description: 'Le pack classique pour les achats rapides.', chips: ['Paiement PayPal', 'Panier groupé', 'Support Discord'] },
+  { id: 'ac2000', name: '2000 AceCoins', price: 20, image: 'images/packs/pack_2000.png', description: 'Pack recommandé pour acheter le VIP ACEPVP.', chips: ['VIP = 2000 AC', 'Paiement sécurisé', 'Ajout panier'] },
+  { id: 'ac5000', name: '5000 AceCoins', price: 50, image: 'images/packs/pack_5000.png', description: 'Pack premium pour plusieurs achats en jeu.', chips: ['Gros volume', 'Paiement sécurisé', 'Ticket boutique'] },
+  { id: 'ac10000', name: '10000 AceCoins', price: 100, image: 'images/packs/pack_10000.png', description: 'Le plus gros pack pour optimiser ton solde.', chips: ['Mega pack', 'Paiement PayPal', 'Panier multi-articles'] }
+];
+
+const SERVICES = [
+  { id: 'unban', name: 'Unban ACEPVP', price: 50, image: 'images/products/unban.png', description: 'Paiement sécurisé PayPal. Ajoute cet article au panier puis règle en une seule fois.', chips: ['Service staff', 'Ajout panier', 'Ticket Discord boutique'] }
 ];
 
 const VEHICLES = [
-  { name: 'Buffalo STX Blindée', priceCoins: 2499, rarity: 'Épique', icon: '🚗' },
-  { name: 'Schafter RS Blindée', priceCoins: 3999, rarity: 'Épique', icon: '🚘' },
-  { name: 'Kuruma Blindée', priceCoins: 1799, rarity: 'Classique', icon: '🛡️' },
-  { name: 'Baller LE Blindée', priceCoins: 2899, rarity: 'Premium', icon: '🚙' },
-  { name: 'Nightshark Blindée', priceCoins: 4499, rarity: 'Prestige', icon: '🦈' },
-  { name: 'Patriot Mil-Spec', priceCoins: 4999, rarity: 'Prestige', icon: '⚔️' }
+  { id: 'x90_2021', name: 'X90 2021', priceCoins: 5999, image: 'images/vehicles/x90_2021.png', badge: 'Prestige', tags: ['Transmission intégrale', 'Très rare'] },
+  { id: 'growler_custom', name: 'Growler Custom', priceCoins: 4999, image: 'images/vehicles/growler_custom.png', badge: 'Prestige', tags: ['Pursuit', 'Custom'] },
+  { id: 'ubermacht_sentinel_rts', name: 'Ubermacht Sentinel RTS', priceCoins: 4599, image: 'images/vehicles/ubermacht_sentinel_rts.png', badge: 'Prestige', tags: ['Street', 'Sport'] },
+  { id: 'benefactor_scharmann', name: 'Benefactor Scharmann', priceCoins: 4299, image: 'images/vehicles/benefactor_scharmann.png', badge: 'Élite', tags: ['Berline blindée', 'Confort'] },
+  { id: 'annis_elegy', name: 'Annis Elegy', priceCoins: 3999, image: 'images/vehicles/annis_elegy.png', badge: 'Élite', tags: ['Rapide', 'Stable'] },
+  { id: 'karin_s95_bagged', name: 'Karin S95 Bagged', priceCoins: 3799, image: 'images/vehicles/karin_s95_bagged.png', badge: 'Élite', tags: ['Showcar', 'Basculée'] },
+  { id: 'karin_s95', name: 'Karin S95', priceCoins: 3599, image: 'images/vehicles/karin_s95.png', badge: 'Rare', tags: ['Compacte', 'Polyvalente'] },
+  { id: 'baja_weevil', name: 'Baja Weevil', priceCoins: 3399, image: 'images/vehicles/baja_weevil.png', badge: 'Rare', tags: ['Off-road', 'Fun'] },
+  { id: 'benefactor_schafter', name: 'Benefactor Schafter', priceCoins: 2999, image: 'images/vehicles/benefactor_schafter.png', badge: 'Rare', tags: ['Berline', 'Accessible'] }
 ];
 
-let cart = [];
-let paypalButtonsRendered = false;
+let cart = loadCart();
+let toastTimer = null;
+let paypalButtons = null;
+let paypalRendered = false;
 
-const eur = (value) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
+const els = {};
 
-function showToast(message) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(showToast._t);
-  showToast._t = setTimeout(() => toast.classList.remove('show'), 2800);
+document.addEventListener('DOMContentLoaded', () => {
+  bindElements();
+  renderProducts();
+  renderVehicles();
+  renderCart();
+  bindEvents();
+  initReveal();
+  initPayPal();
+});
+
+function bindElements() {
+  els.packsGrid = document.getElementById('packsGrid');
+  els.servicesGrid = document.getElementById('servicesGrid');
+  els.vehiclesGrid = document.getElementById('vehiclesGrid');
+  els.cartFab = document.getElementById('cartFab');
+  els.heroCartButton = document.getElementById('heroCartButton');
+  els.cartDrawer = document.getElementById('cartDrawer');
+  els.cartOverlay = document.getElementById('cartOverlay');
+  els.closeCart = document.getElementById('closeCart');
+  els.cartItems = document.getElementById('cartItems');
+  els.cartCount = document.getElementById('cartCount');
+  els.cartSubtotal = document.getElementById('cartSubtotal');
+  els.cartTotal = document.getElementById('cartTotal');
+  els.discordPseudo = document.getElementById('discordPseudo');
+  els.toast = document.getElementById('toast');
+  els.paypalWrap = document.getElementById('paypalButtonWrap');
+  els.paypalHelp = document.getElementById('paypalHelp');
 }
 
 function renderProducts() {
-  const grid = document.getElementById('productsGrid');
-  grid.innerHTML = PRODUCTS.map(product => `
-    <article class="product-card">
-      <div class="product-top">
-        <div class="product-icon">${product.icon}</div>
-        <div class="price">${eur(product.price)}</div>
+  els.packsGrid.innerHTML = PACKS.map(renderProductCard).join('');
+  els.servicesGrid.innerHTML = SERVICES.map(renderProductCard).join('');
+}
+
+function renderProductCard(product) {
+  return `
+    <article class="card reveal">
+      <div class="card__media">
+        <img src="${product.image}" alt="${escapeHtml(product.name)}" loading="lazy" />
       </div>
-      <div>
-        <h3>${product.name}</h3>
-        <p class="muted">${product.type === 'coins' ? 'Pack AceCoins PayPal' : 'Service PayPal'}</p>
-      </div>
-      <ul class="perks">${product.perks.map(item => `<li>${item}</li>`).join('')}</ul>
-      <div class="card-actions">
-        <span class="muted">Paiement unique</span>
-        <button class="btn btn--primary btn--small" data-add="${product.id}">Ajouter</button>
+      <div class="card__body">
+        <div class="card__head">
+          <div>
+            <h3 class="card__title">${escapeHtml(product.name)}</h3>
+            <p class="card__desc">${escapeHtml(product.description)}</p>
+          </div>
+          <div class="card__price">${formatPrice(product.price)}</div>
+        </div>
+        <div class="card__chips">${product.chips.map(chip => `<span>${escapeHtml(chip)}</span>`).join('')}</div>
+        <div class="card__actions">
+          <div class="card__paypal">Paiement PayPal</div>
+          <button class="card__button" data-add-to-cart="${product.id}">Ajouter</button>
+        </div>
       </div>
     </article>
-  `).join('');
-
-  grid.querySelectorAll('[data-add]').forEach(btn => {
-    btn.addEventListener('click', () => addToCart(btn.dataset.add));
-  });
+  `;
 }
 
 function renderVehicles() {
-  const grid = document.getElementById('vehicleGrid');
-  grid.innerHTML = VEHICLES.map(vehicle => `
-    <article class="vehicle-card">
-      <div class="vehicle-thumb">${vehicle.icon}</div>
-      <div>
-        <h3>${vehicle.name}</h3>
-        <div class="vehicle-meta"><span>${vehicle.rarity}</span><strong>${vehicle.priceCoins.toLocaleString('fr-FR')} AC</strong></div>
+  els.vehiclesGrid.innerHTML = VEHICLES.map(vehicle => `
+    <article class="vehicle-card reveal">
+      <div class="vehicle-card__media">
+        <span class="vehicle-badge">${escapeHtml(vehicle.badge)}</span>
+        <img src="${vehicle.image}" alt="${escapeHtml(vehicle.name)}" loading="lazy" />
       </div>
-      <p class="muted">Récupération en jeu après achat d'AceCoins et ticket Discord.</p>
+      <div class="vehicle-card__body">
+        <div class="vehicle-meta">
+          <h3>${escapeHtml(vehicle.name)}</h3>
+          <div class="vehicle-price">${formatNumber(vehicle.priceCoins)} AC</div>
+        </div>
+        <p>Disponible via AceCoins en jeu. Ouvre un ticket boutique si tu as une question avant achat.</p>
+        <div class="vehicle-tags">${vehicle.tags.map(tag => `<span>${escapeHtml(tag)}</span>`).join('')}</div>
+      </div>
     </article>
   `).join('');
 }
 
-function addToCart(id) {
-  const product = PRODUCTS.find(p => p.id === id);
+function bindEvents() {
+  document.addEventListener('click', (event) => {
+    const addBtn = event.target.closest('[data-add-to-cart]');
+    if (addBtn) {
+      addToCart(addBtn.dataset.addToCart);
+      return;
+    }
+
+    const qtyBtn = event.target.closest('[data-cart-action]');
+    if (qtyBtn) {
+      handleCartAction(qtyBtn.dataset.cartAction, qtyBtn.dataset.id);
+    }
+  });
+
+  [els.cartFab, els.heroCartButton].forEach(btn => btn?.addEventListener('click', openCart));
+  [els.cartOverlay, els.closeCart].forEach(btn => btn?.addEventListener('click', closeCart));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeCart();
+  });
+}
+
+function addToCart(productId) {
+  const product = [...PACKS, ...SERVICES].find(item => item.id === productId);
   if (!product) return;
-  const existing = cart.find(item => item.id === id);
-  if (existing) existing.quantity += 1;
-  else cart.push({ ...product, quantity: 1 });
-  saveCart();
+
+  const existing = cart.find(item => item.id === productId);
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 });
+  }
+  persistCart();
   renderCart();
-  showToast(`${product.name} ajouté au panier`);
+  showToast(`${product.name} ajouté au panier.`);
 }
 
-function changeQty(id, delta) {
-  const item = cart.find(product => product.id === id);
+function handleCartAction(action, id) {
+  const item = cart.find(entry => entry.id === id);
   if (!item) return;
-  item.quantity += delta;
-  if (item.quantity <= 0) cart = cart.filter(product => product.id !== id);
-  saveCart();
+
+  if (action === 'minus') {
+    item.quantity -= 1;
+    if (item.quantity <= 0) {
+      cart = cart.filter(entry => entry.id !== id);
+    }
+  }
+
+  if (action === 'plus') {
+    item.quantity += 1;
+  }
+
+  if (action === 'remove') {
+    cart = cart.filter(entry => entry.id !== id);
+  }
+
+  persistCart();
   renderCart();
-}
-
-function removeItem(id) {
-  cart = cart.filter(item => item.id !== id);
-  saveCart();
-  renderCart();
-}
-
-function cartTotal() {
-  return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-}
-
-function cartCount() {
-  return cart.reduce((sum, item) => sum + item.quantity, 0);
 }
 
 function renderCart() {
-  const wrapper = document.getElementById('cartItems');
-  const subtotal = document.getElementById('subtotal');
-  const total = document.getElementById('total');
-  const count = document.getElementById('cartCount');
-  const warning = document.getElementById('paypal-warning');
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = getCartTotal();
 
-  subtotal.textContent = eur(cartTotal());
-  total.textContent = eur(cartTotal());
-  count.textContent = `${cartCount()} article${cartCount() > 1 ? 's' : ''}`;
+  els.cartCount.textContent = totalItems;
+  els.cartSubtotal.textContent = formatPrice(totalPrice);
+  els.cartTotal.textContent = formatPrice(totalPrice);
 
   if (!cart.length) {
-    wrapper.className = 'cart-items empty';
-    wrapper.textContent = 'Ton panier est vide.';
-    warning.classList.remove('hidden');
+    els.cartItems.innerHTML = '<div class="cart-empty">Ton panier est vide. Ajoute un pack AceCoins ou l’unban pour continuer.</div>';
   } else {
-    wrapper.className = 'cart-items';
-    wrapper.innerHTML = cart.map(item => `
-      <div class="cart-item">
-        <div class="cart-item__top">
-          <div>
-            <strong>${item.name}</strong>
-            <div class="muted">${eur(item.price)} / unité</div>
+    els.cartItems.innerHTML = cart.map(item => `
+      <article class="cart-row">
+        <img src="${item.image}" alt="${escapeHtml(item.name)}" />
+        <div>
+          <h3>${escapeHtml(item.name)}</h3>
+          <p>${formatPrice(item.price)} • quantité ${item.quantity}</p>
+          <div class="cart-controls">
+            <button class="qty-btn" data-cart-action="minus" data-id="${item.id}">−</button>
+            <button class="qty-btn" data-cart-action="plus" data-id="${item.id}">+</button>
+            <button class="remove-btn" data-cart-action="remove" data-id="${item.id}">Retirer</button>
           </div>
-          <button class="btn btn--danger btn--small" data-remove="${item.id}">Supprimer</button>
         </div>
-        <div class="card-actions">
-          <div class="qty">
-            <button data-qty="${item.id}" data-delta="-1">−</button>
-            <strong>${item.quantity}</strong>
-            <button data-qty="${item.id}" data-delta="1">+</button>
-          </div>
-          <strong>${eur(item.price * item.quantity)}</strong>
-        </div>
-      </div>
+        <div class="cart-line-price">${formatPrice(item.price * item.quantity)}</div>
+      </article>
     `).join('');
-    warning.classList.add('hidden');
   }
 
-  wrapper.querySelectorAll('[data-remove]').forEach(btn => btn.addEventListener('click', () => removeItem(btn.dataset.remove)));
-  wrapper.querySelectorAll('[data-qty]').forEach(btn => btn.addEventListener('click', () => changeQty(btn.dataset.qty, Number(btn.dataset.delta))));
+  const hasItems = cart.length > 0;
+  els.paypalWrap.classList.toggle('is-disabled', !hasItems);
+  els.paypalHelp.textContent = hasItems
+    ? 'Le paiement s’affiche ci-dessous. Après paiement, ouvre un ticket Discord dans la catégorie boutique.'
+    : 'Ajoute au moins un article au panier pour afficher le paiement PayPal.';
 }
 
-function saveCart() {
-  localStorage.setItem('acepvp_cart', JSON.stringify(cart));
+function openCart() {
+  els.cartDrawer.classList.add('is-open');
+  els.cartDrawer.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCart() {
+  els.cartDrawer.classList.remove('is-open');
+  els.cartDrawer.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
 }
 
 function loadCart() {
   try {
-    cart = JSON.parse(localStorage.getItem('acepvp_cart') || '[]');
-    if (!Array.isArray(cart)) cart = [];
+    const raw = localStorage.getItem('acepvp_cart');
+    return raw ? JSON.parse(raw) : [];
   } catch {
-    cart = [];
+    return [];
   }
 }
 
-function getPayload(details) {
-  const pseudo = document.getElementById('playerPseudo').value.trim();
-  const note = document.getElementById('orderNote').value.trim();
+function persistCart() {
+  localStorage.setItem('acepvp_cart', JSON.stringify(cart));
+}
+
+function getCartTotal() {
+  return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+}
+
+function buildNotifyPayload(details, orderData) {
   return {
-    source: 'acepvp-boutique',
-    pseudo: pseudo || 'Non renseigné',
-    note: note || '',
-    total: Number(cartTotal().toFixed(2)),
-    currency: window.SHOP_CONFIG.currency,
+    discordPseudo: els.discordPseudo.value.trim() || 'Non renseigné',
+    total: Number(getCartTotal().toFixed(2)),
+    currency: SHOP.currency || 'EUR',
     items: cart.map(item => ({
       id: item.id,
       name: item.name,
       quantity: item.quantity,
-      unit_price: item.price,
+      unit_price: Number(item.price.toFixed(2)),
       total_price: Number((item.price * item.quantity).toFixed(2))
     })),
     paypal: {
-      orderID: details?.id || '',
-      status: details?.status || '',
-      payerEmail: details?.payer?.email_address || '',
-      payerName: [details?.payer?.name?.given_name, details?.payer?.name?.surname].filter(Boolean).join(' ') || ''
+      orderID: orderData?.orderID || details?.id || 'N/A',
+      status: details?.status || 'COMPLETED',
+      payerName: details?.payer?.name ? `${details.payer.name.given_name || ''} ${details.payer.name.surname || ''}`.trim() : 'Non transmis',
+      payerEmail: details?.payer?.email_address || 'Non transmis'
     }
   };
 }
 
-function setupPaypal() {
-  if (!window.paypal || paypalButtonsRendered) return;
-  paypalButtonsRendered = true;
+async function sendDiscordNotification(payload) {
+  if (!SHOP.workerBaseUrl) return;
 
-  paypal.Buttons({
-    style: { layout: 'vertical', shape: 'rect', label: 'paypal' },
-    onClick: function () {
-      if (!cart.length) {
-        showToast('Ajoute au moins un article au panier.');
-        return false;
-      }
-      return true;
-    },
-    createOrder: function (data, actions) {
-      if (!cart.length) throw new Error('Panier vide');
-      return actions.order.create({
-        purchase_units: [{
-          amount: { currency_code: window.SHOP_CONFIG.currency, value: cartTotal().toFixed(2) },
-          description: cart.map(item => `${item.name} x${item.quantity}`).join(' | ')
-        }]
-      });
-    },
-    onApprove: function (data, actions) {
-      return actions.order.capture().then(async function (details) {
-        try {
-          await fetch(`${window.SHOP_CONFIG.workerBaseUrl}/api/discord-notify`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(getPayload(details))
-          });
-        } catch (error) {
-          console.error(error);
-        }
-        cart = [];
-        saveCart();
-        renderCart();
-        document.getElementById('orderNote').value = '';
-        showToast('Paiement validé. Le staff a reçu la notification Discord.');
-      });
-    },
-    onError: function (err) {
-      console.error(err);
-      showToast('Erreur PayPal. Vérifie ton compte ou les paramètres PayPal.');
-    }
-  }).render('#paypal-button-container');
+  try {
+    await fetch(`${SHOP.workerBaseUrl}/api/discord-notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    console.error('Erreur notification Discord', error);
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadCart();
-  renderProducts();
-  renderVehicles();
-  renderCart();
-  setupPaypal();
-});
+function initPayPal() {
+  const checkSdk = () => {
+    if (!window.paypal?.Buttons) {
+      setTimeout(checkSdk, 250);
+      return;
+    }
+
+    if (paypalRendered) return;
+
+    paypalButtons = window.paypal.Buttons({
+      style: { layout: 'vertical', shape: 'rect', label: 'paypal', height: 46 },
+      onClick() {
+        if (!cart.length) {
+          showToast('Ajoute un article avant de payer.');
+          return Promise.reject();
+        }
+        return Promise.resolve();
+      },
+      createOrder(data, actions) {
+        const total = getCartTotal();
+        if (!total) throw new Error('Panier vide');
+        return actions.order.create({
+          purchase_units: [{
+            description: `ACEPVP - ${cart.map(item => `${item.name} x${item.quantity}`).join(', ').slice(0, 120)}`,
+            amount: {
+              currency_code: SHOP.currency || 'EUR',
+              value: total.toFixed(2)
+            }
+          }]
+        });
+      },
+      async onApprove(data, actions) {
+        const details = await actions.order.capture();
+        const payload = buildNotifyPayload(details, data);
+        await sendDiscordNotification(payload);
+        cart = [];
+        persistCart();
+        renderCart();
+        closeCart();
+        showToast('Paiement validé. Ouvre un ticket Discord catégorie boutique.');
+      },
+      onError(error) {
+        console.error(error);
+        showToast('Erreur PayPal. Vérifie ton compte ou réessaie.');
+      }
+    });
+
+    paypalButtons.render('#paypal-button-container');
+    paypalRendered = true;
+  };
+
+  checkSdk();
+}
+
+function formatPrice(value) {
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value);
+}
+
+function formatNumber(value) {
+  return new Intl.NumberFormat('fr-FR').format(value);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function showToast(message) {
+  clearTimeout(toastTimer);
+  els.toast.textContent = message;
+  els.toast.classList.add('is-visible');
+  toastTimer = setTimeout(() => {
+    els.toast.classList.remove('is-visible');
+  }, 2600);
+}
+
+function initReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+}
