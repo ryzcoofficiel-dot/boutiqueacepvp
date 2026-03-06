@@ -9,7 +9,7 @@ const PACKS = [
 ];
 
 const SERVICES = [
-  { id: 'unban', name: 'Unban ACEPVP', price: 50, image: 'images/products/unban.png', description: 'Paiement sécurisé PayPal. Ajoute cet article au panier puis règle en une seule fois.', chips: ['Service staff', 'Ajout panier', 'Ticket Discord boutique'] }
+  { id: 'unban', name: 'Unban ACEPVP', price: 50, image: 'images/products/unban.png', description: "Le unban sur AcePvP exclut automatiquement la personne visée des giveaway, événements etc etc. Le fait de se faire unban n'exclut pas non le fait de se refaire ban si récidive. Aucun remboursement n'aura lieu conformément à notre politique de remboursement.", chips: ['Ajout au panier', 'Paiement PayPal', 'Ticket Discord boutique'] }
 ];
 
 const VEHICLES = [
@@ -196,10 +196,17 @@ function renderCart() {
   }
 
   const hasItems = cart.length > 0;
-  els.paypalWrap.classList.toggle('is-disabled', !hasItems);
-  els.paypalHelp.textContent = hasItems
-    ? 'Le paiement s’affiche ci-dessous. Après paiement, ouvre un ticket Discord dans la catégorie boutique.'
-    : 'Ajoute au moins un article au panier pour afficher le paiement PayPal.';
+  const hasDiscordPseudo = getDiscordPseudo().length >= 2;
+  const ready = canCheckout();
+  els.paypalWrap.classList.toggle('is-disabled', !ready);
+  els.paypalHelp.textContent = !hasItems
+    ? 'Ajoute au moins un article au panier pour afficher le paiement PayPal.'
+    : !hasDiscordPseudo
+      ? 'Renseigne d\'abord ton pseudo Discord pour débloquer le paiement PayPal.'
+      : 'Le paiement s\'affiche ci-dessous. Après paiement, ouvre un ticket Discord catégorie boutique.';
+  if (els.discordPseudo) {
+    els.discordPseudo.classList.toggle('is-invalid', hasItems && !hasDiscordPseudo);
+  }
 }
 
 function openCart() {
@@ -231,9 +238,17 @@ function getCartTotal() {
   return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 }
 
+function getDiscordPseudo() {
+  return els.discordPseudo?.value.trim() || '';
+}
+
+function canCheckout() {
+  return cart.length > 0 && getDiscordPseudo().length >= 2;
+}
+
 function buildNotifyPayload(details, orderData) {
   return {
-    discordPseudo: els.discordPseudo.value.trim() || 'Non renseigné',
+    discordPseudo: getDiscordPseudo() || 'Non renseigné',
     total: Number(getCartTotal().toFixed(2)),
     currency: SHOP.currency || 'EUR',
     items: cart.map(item => ({
@@ -282,11 +297,17 @@ function initPayPal() {
           showToast('Ajoute un article avant de payer.');
           return Promise.reject();
         }
+        if (!getDiscordPseudo()) {
+          showToast('Le pseudo Discord est obligatoire avant le paiement.');
+          els.discordPseudo?.focus();
+          return Promise.reject();
+        }
         return Promise.resolve();
       },
       createOrder(data, actions) {
         const total = getCartTotal();
         if (!total) throw new Error('Panier vide');
+        if (!getDiscordPseudo()) throw new Error('Pseudo Discord obligatoire');
         return actions.order.create({
           purchase_units: [{
             description: `ACEPVP - ${cart.map(item => `${item.name} x${item.quantity}`).join(', ').slice(0, 120)}`,

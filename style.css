@@ -475,6 +475,10 @@ button { cursor: pointer; }
   border-color: rgba(124,223,255,.45);
   box-shadow: 0 0 0 4px rgba(124,223,255,.08);
 }
+.field input.is-invalid {
+  border-color: rgba(255,102,128,.55);
+  box-shadow: 0 0 0 4px rgba(255,102,128,.08);
+}
 .cart-items {
   display: flex;
   flex-direction: column;
@@ -553,7 +557,7 @@ button { cursor: pointer; }
   background: rgba(255,255,255,.04);
   padding: 14px;
 }
-.paypal-wrap.is-disabled { opacity: .45; }
+.paypal-wrap.is-disabled { opacity: .45; pointer-events: none; filter: grayscale(.08); }
 .paypal-help {
   margin: -6px 0 0;
   color: var(--muted);
