@@ -608,3 +608,6 @@ button { cursor: pointer; }
   .cart-drawer__overlay { display: none; }
   .cart-drawer__panel { border-left: 0; }
 }
+
+.card__actions{justify-content:flex-end;}
+.card__paypal{display:none;}

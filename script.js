@@ -81,7 +81,6 @@ function renderProductCard(product) {
         </div>
         <div class="card__chips">${product.chips.map(chip => `<span>${escapeHtml(chip)}</span>`).join('')}</div>
         <div class="card__actions">
-          <div class="card__paypal">Paiement PayPal</div>
           <button class="card__button" data-add-to-cart="${product.id}">Ajouter</button>
         </div>
       </div>
@@ -123,6 +122,8 @@ function bindEvents() {
   });
 
   [els.cartFab, els.heroCartButton].forEach(btn => btn?.addEventListener('click', openCart));
+  els.discordPseudo?.addEventListener('input', () => renderCart());
+  els.discordPseudo?.addEventListener('change', () => renderCart());
   [els.cartOverlay, els.closeCart].forEach(btn => btn?.addEventListener('click', closeCart));
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') closeCart();
