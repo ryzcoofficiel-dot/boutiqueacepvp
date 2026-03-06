@@ -1,159 +1,130 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Boutique ACEPVP</title>
-  <meta name="description" content="Achetez vos AceCoins sur ACEPVP, récupérez vos achats via ticket Discord et consultez le catalogue blindé.">
-  <link rel="preconnect" href="https://www.paypal.com">
-  <link rel="preconnect" href="https://www.paypalobjects.com">
-  <link rel="stylesheet" href="./style.css">
+  <meta name="description" content="Boutique ACEPVP - Packs AceCoins, VIP et services." />
+  <link rel="stylesheet" href="style.css" />
   <script>
     window.SHOP_CONFIG = {
       paypalClientId: "ASp3JDmaP_WQEih0KfjSoUAnEBtpOvM2wIx1-L97dtPKhSq3PBEbd8yKgaaX6z5KTB2MVAk8XCPvHr9a",
       currency: "EUR",
-      workerBaseUrl: "https://paypaldiscordworkeracepvp.ryzcoofficiel.workers.dev",
-      discordInvite: "https://discord.gg/acepvp"
+      workerBaseUrl: "https://paypaldiscordworkeracepvp.ryzcoofficiel.workers.dev"
     };
   </script>
-  <script src="https://www.paypal.com/sdk/js?client-id=ASp3JDmaP_WQEih0KfjSoUAnEBtpOvM2wIx1-L97dtPKhSq3PBEbd8yKgaaX6z5KTB2MVAk8XCPvHr9a&currency=EUR&intent=capture&components=buttons" defer></script>
-  <script src="./script.js" defer></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=ASp3JDmaP_WQEih0KfjSoUAnEBtpOvM2wIx1-L97dtPKhSq3PBEbd8yKgaaX6z5KTB2MVAk8XCPvHr9a&currency=EUR&intent=capture&components=buttons" data-sdk-integration-source="button-factory"></script>
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <div class="background"></div>
   <header class="hero">
-    <div class="hero__overlay"></div>
-    <nav class="nav shell">
-      <div class="brand">
-        <img src="./images/ui/ace_logo.png" alt="Logo ACEPVP">
-        <div>
-          <strong>ACEPVP</strong>
-          <span>Boutique officielle</span>
-        </div>
-      </div>
-      <div class="nav__links">
-        <a href="#coins">AceCoins</a>
-        <a href="#catalogue">Catalogue</a>
-        <a href="#services">Services</a>
-        <a href="#guide">Guide</a>
-      </div>
-      <button class="cart-button" id="openCartBtn" type="button" aria-label="Ouvrir le panier">
-        <span class="cart-button__icon">🛒</span>
-        <span class="cart-button__count" id="cartCount">0</span>
-      </button>
-    </nav>
-
-    <section class="shell hero__content">
-      <div class="hero__copy">
-        <p class="eyebrow">Packs PayPal + récupération Discord</p>
+    <div class="container hero__inner">
+      <div>
+        <div class="badge">ACEPVP • Boutique officielle</div>
         <h1>Boutique ACEPVP</h1>
-        <p class="hero__lead">Achète des <strong>AceCoins</strong> en une seule commande PayPal, puis récupère tes coins, ton VIP et tes services via ticket Discord.</p>
-        <div class="hero__badges">
-          <span>AceCoins payés via PayPal</span>
-          <span>VIP = 2000 AceCoins</span>
-          <span>Véhicules récupérés en jeu</span>
-        </div>
+        <p class="hero__text">Achète tes <strong>AceCoins</strong> en une seule commande PayPal. Les <strong>véhicules</strong> et le <strong>VIP</strong> se récupèrent ensuite via ticket Discord avec tes AceCoins.</p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="#coins">Acheter des AceCoins</a>
-          <a class="btn btn--ghost" href="#catalogue">Voir le catalogue</a>
+          <a href="#coins" class="btn btn--primary">Voir les packs</a>
+          <a href="#catalogue" class="btn btn--ghost">Voir le catalogue</a>
         </div>
       </div>
-      <aside class="hero__panel card">
-        <h2>Comment ça marche</h2>
-        <ol class="steps">
-          <li>Tu ajoutes un ou plusieurs packs AceCoins au panier.</li>
-          <li>Tu paies une seule fois avec PayPal.</li>
-          <li>Le Worker envoie automatiquement l'achat sur Discord.</li>
-          <li>Le staff crédite les AceCoins dans ton ticket.</li>
-        </ol>
-        <p class="note">Le VIP et les véhicules blindés ne se paient pas directement en euros sur cette boutique. Ils se récupèrent ensuite avec les AceCoins.</p>
+      <aside class="hero__panel">
+        <h2>Rappel important</h2>
+        <ul>
+          <li>Les packs AceCoins sont payés par PayPal.</li>
+          <li>Le VIP coûte <strong>2000 AceCoins</strong>.</li>
+          <li>Les véhicules sont récupérés <strong>en jeu</strong> avec les AceCoins.</li>
+          <li>Après achat, un message est envoyé automatiquement sur Discord.</li>
+        </ul>
       </aside>
-    </section>
+    </div>
   </header>
 
-  <main>
-    <section class="section shell" id="coins">
-      <div class="section__head">
-        <div>
-          <p class="eyebrow">Paiement PayPal</p>
-          <h2>Packs AceCoins</h2>
+  <main class="container layout">
+    <section class="main-column">
+      <section id="coins" class="section">
+        <div class="section__head">
+          <div>
+            <p class="eyebrow">Paiement PayPal</p>
+            <h2>Packs AceCoins</h2>
+          </div>
+          <p class="section__desc">Ajoute plusieurs packs au panier puis paye une seule fois.</p>
         </div>
-        <p>Le panier regroupe plusieurs packs pour un paiement unique. Exemple : 20€ + 10€ = 30€ en une fois.</p>
-      </div>
-      <div class="product-grid" id="coinGrid"></div>
+        <div id="productsGrid" class="products-grid"></div>
+      </section>
+
+      <section id="vip" class="section section--soft">
+        <div class="section__head">
+          <div>
+            <p class="eyebrow">Récupération en jeu</p>
+            <h2>VIP & services</h2>
+          </div>
+        </div>
+        <div class="info-cards">
+          <article class="info-card">
+            <span class="pill">VIP</span>
+            <h3>VIP ACEPVP</h3>
+            <p>Le pack VIP coûte <strong>2000 AceCoins</strong>. Une fois tes AceCoins achetés, ouvre un ticket Discord pour le recevoir.</p>
+          </article>
+          <article class="info-card">
+            <span class="pill">Service</span>
+            <h3>Unban ACEPVP</h3>
+            <p>Service staff à <strong>50€</strong>. Le paiement PayPal est direct depuis le panier et la demande est traitée ensuite via ticket Discord.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="catalogue" class="section">
+        <div class="section__head">
+          <div>
+            <p class="eyebrow">Catalogue véhicules</p>
+            <h2>Véhicules blindés</h2>
+          </div>
+          <p class="section__desc">Catalogue visuel uniquement. Les véhicules ne se paient pas directement en euros ici.</p>
+        </div>
+        <div id="vehicleGrid" class="vehicle-grid"></div>
+      </section>
     </section>
 
-    <section class="section shell" id="services">
-      <div class="section__head">
-        <div>
-          <p class="eyebrow">Après crédit des AceCoins</p>
-          <h2>VIP & services</h2>
+    <aside class="cart-card">
+      <div class="cart-card__sticky">
+        <div class="cart-head">
+          <div>
+            <p class="eyebrow">Panier</p>
+            <h2>Commande</h2>
+          </div>
+          <span id="cartCount" class="cart-count">0 article</span>
         </div>
-        <p>Le VIP se prend avec tes AceCoins. L'Unban reste un service séparé traité par le staff après paiement et ticket Discord.</p>
-      </div>
-      <div class="service-grid" id="serviceGrid"></div>
-    </section>
 
-    <section class="section shell" id="catalogue">
-      <div class="section__head">
-        <div>
-          <p class="eyebrow">Catalogue blindé</p>
-          <h2>Véhicules récupérés en jeu avec les AceCoins</h2>
-        </div>
-        <p>Ces véhicules ne passent pas par PayPal directement. Le prix est affiché en AceCoins, puis la récupération se fait avec le staff en jeu.</p>
-      </div>
-      <div class="vehicle-grid" id="vehicleGrid"></div>
-    </section>
+        <label class="field">
+          <span>Pseudo FiveM</span>
+          <input id="playerPseudo" type="text" placeholder="Ex: Zipperr" maxlength="32" />
+        </label>
 
-    <section class="section shell guide" id="guide">
-      <div class="guide__copy card">
-        <p class="eyebrow">Obligatoire avant paiement</p>
-        <h2>Informations joueur</h2>
-        <p>Le Worker envoie automatiquement le détail de la commande sur Discord. Remplis bien ces champs avant de payer.</p>
-        <div class="form-grid">
-          <label>
-            <span>Pseudo FiveM</span>
-            <input type="text" id="playerName" placeholder="Ex : Zipperr" maxlength="32">
-          </label>
-          <label>
-            <span>Discord</span>
-            <input type="text" id="playerDiscord" placeholder="Ex : zipperr#0001 ou @zipperr" maxlength="48">
-          </label>
-          <label class="form-grid__full">
-            <span>Note staff (facultatif)</span>
-            <textarea id="orderNote" rows="3" placeholder="Ex : créditer sur le compte principal"></textarea>
-          </label>
+        <label class="field">
+          <span>Note optionnelle</span>
+          <textarea id="orderNote" rows="3" placeholder="Ex: achat pour mon compte principal"></textarea>
+        </label>
+
+        <div id="cartItems" class="cart-items empty">Ton panier est vide.</div>
+
+        <div class="cart-summary">
+          <div><span>Sous-total</span><strong id="subtotal">0,00 €</strong></div>
+          <div><span>Total</span><strong id="total">0,00 €</strong></div>
+        </div>
+
+        <div id="paypal-warning" class="warning hidden">Ajoute au moins un article au panier pour payer.</div>
+        <div id="paypal-button-container" class="paypal-box"></div>
+
+        <div class="help-box">
+          <h3>Après paiement</h3>
+          <p>Un message automatique part sur Discord avec le montant et les articles. Garde aussi ta preuve PayPal.</p>
+          <a class="btn btn--ghost btn--full" href="https://discord.gg/acepvp" target="_blank" rel="noopener">Ouvrir Discord</a>
         </div>
       </div>
-      <div class="guide__copy card">
-        <p class="eyebrow">Paiement groupé</p>
-        <h2>Zone PayPal</h2>
-        <p>Le bouton PayPal ci-dessous facture le total du panier et déclenche ensuite l'envoi automatique vers le Worker Discord.</p>
-        <div id="paypalButtonMount" class="paypal-mount"></div>
-        <p class="mini">Si le bouton n'apparaît pas, vérifie le client ID PayPal ou la console navigateur.</p>
-      </div>
-    </section>
+    </aside>
   </main>
 
-  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
-    <div class="cart-drawer__overlay" id="closeCartOverlay"></div>
-    <div class="cart-drawer__panel">
-      <div class="cart-drawer__head">
-        <div>
-          <p class="eyebrow">Panier</p>
-          <h2>Ta commande</h2>
-        </div>
-        <button class="icon-btn" id="closeCartBtn" type="button" aria-label="Fermer">✕</button>
-      </div>
-      <div class="cart-items" id="cartItems"></div>
-      <div class="cart-summary">
-        <div><span>Sous-total</span><strong id="cartSubtotal">0,00 €</strong></div>
-        <div><span>Articles</span><strong id="cartArticles">0</strong></div>
-      </div>
-      <p class="mini">Après paiement, le Worker enverra automatiquement : article(s), montant, ID PayPal, pseudo, Discord et note staff.</p>
-    </div>
-  </aside>
-
-  <div class="toast" id="toast"></div>
+  <div id="toast" class="toast" aria-live="polite"></div>
 </body>
 </html>
